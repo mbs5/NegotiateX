@@ -14,23 +14,27 @@ struct SimulationView: View {
     @State private var selectedScenario: String?
     @State private var chatMessages: [ChatMessage] = []
     @State private var newMessage = ""
+    @State private var showPersonaDropdown = false
 
     let scenarios = [
         "Salary Negotiation", "Contract Dispute", "Partnership Terms", "Workplace Conflict",
     ]
-    var persona: String
+    @State var persona: String  // Changed from private to public
+
+    // Add a public initializer
+    public init(persona: String) {
+        _persona = State(initialValue: persona)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             topBar
 
             if selectedScenario == nil {
-                scenarioSelection
+                scenarioSelectionAndInput
             } else {
                 chatInterface
             }
-
-            bottomBar
         }
         .alert(isPresented: $showingAlert) {
             Alert(
@@ -43,6 +47,14 @@ struct SimulationView: View {
 
     private var topBar: some View {
         HStack {
+            Button(action: {
+                selectedScenario = nil
+                chatMessages.removeAll()
+            }) {
+                Image(systemName: "arrow.left")
+                Text("Back")
+            }
+
             Spacer()
 
             HStack {
@@ -55,23 +67,31 @@ struct SimulationView: View {
             .padding(8)
             .background(Color.gray.opacity(0.1))
             .cornerRadius(20)
-            .help(
-                isUsingInternet
-                    ? "You are using Llama 3.2 90B online with Internet"
-                    : "You are using Llama 3.2 1B locally without Internet")
 
-            Image(systemName: personaIcon)
-                .resizable()
-                .frame(width: 20, height: 20)
-            Text("Persona: \(persona)")
-                .font(.headline)
+            Spacer()
+
+            Menu {
+                Button("Nelson Mandela - The Diplomat") { persona = "The Diplomat" }
+                Button("Sun Tzu - The Strategist") { persona = "The Strategist" }
+                Button("Harvey Specter - The Dealmaker") { persona = "The Dealmaker" }
+            } label: {
+                Image(systemName: personaIcon)
+                    .resizable()
+                    .frame(width: 20, height: 20)
+            }
         }
         .padding()
         .background(Color.gray.opacity(0.1))
     }
 
-    private var scenarioSelection: some View {
-        ScrollView {
+    private var scenarioSelectionAndInput: some View {
+        VStack {
+            Spacer()
+
+            Text("Here are some examples to choose from:")
+                .font(.headline)
+                .padding(.bottom)
+
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 20) {
                 ForEach(scenarios, id: \.self) { scenario in
                     Button(action: {
@@ -86,6 +106,20 @@ struct SimulationView: View {
                 }
             }
             .padding()
+
+            Spacer()
+
+            HStack {
+                TextField("Type a scenario or message...", text: $newMessage)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal)
+
+                Button(action: sendMessage) {
+                    Image(systemName: "paperplane.fill")
+                }
+                .padding(.trailing)
+            }
+            .padding(.vertical)
         }
     }
 
@@ -114,57 +148,14 @@ struct SimulationView: View {
         }
     }
 
-    private var bottomBar: some View {
-        HStack {
-            Button(action: {
-                selectedScenario = nil
-                chatMessages.removeAll()
-            }) {
-                Image(systemName: "arrow.left")
-                Text("Back")
-            }
-
-            Spacer()
-
-            Button(action: {
-                if isUsingInternet {
-                    uploadedFiles.append("File \(uploadedFiles.count + 1)")
-                } else {
-                    showingAlert = true
-                }
-            }) {
-                Image(systemName: "paperclip")
-                Text("Upload File")
-            }
-
-            if !uploadedFiles.isEmpty {
-                Menu {
-                    ForEach(uploadedFiles, id: \.self) { file in
-                        Button(action: {
-                            if let index = uploadedFiles.firstIndex(of: file) {
-                                uploadedFiles.remove(at: index)
-                            }
-                        }) {
-                            Text(file)
-                            Image(systemName: "xmark.circle.fill")
-                        }
-                    }
-                } label: {
-                    Image(systemName: "doc.fill")
-                    Text("\(uploadedFiles.count)")
-                }
-            }
-        }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-    }
-
     private var personaIcon: String {
         switch persona {
         case "The Diplomat":
             return "globe"
         case "The Strategist":
             return "chart.bar"
+        case "The Dealmaker":
+            return "briefcase"
         default:
             return "person.fill"
         }
@@ -172,8 +163,12 @@ struct SimulationView: View {
 
     private func sendMessage() {
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        let message = ChatMessage(content: newMessage, isUser: true)
-        chatMessages.append(message)
+        if selectedScenario == nil {
+            selectedScenario = newMessage
+        } else {
+            let message = ChatMessage(content: newMessage, isUser: true)
+            chatMessages.append(message)
+        }
         newMessage = ""
 
         // Simulate AI response
