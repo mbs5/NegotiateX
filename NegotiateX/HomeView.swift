@@ -13,9 +13,6 @@ struct HomeView: View {
     var body: some View {
         NavigationView {   // Wrap everything in a NavigationView
             VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
                 Text("Welcome to NegotiateX")
                     .font(.title)
                 Text("Please select your persona.")
