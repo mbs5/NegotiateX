@@ -9,42 +9,96 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedPersona: String = "The Strategist"
+    @Environment(\.colorScheme) var colorScheme
+
+    let personas = [
+        ("The Diplomat", "Nelson Mandela", "Bridging divides with empathy"),
+        ("The Strategist", "Sun Tzu", "Winning without fighting"),
+        ("The Dealmaker", "Harvey Spectar", "Closing deals with precision and persuasion")
+    ]
 
     var body: some View {
-        NavigationView {  // Wrap everything in a NavigationView
-            VStack {
-                Text("Welcome to NegotiateX")
-                    .font(.title)
-                Text("Please select your persona.")
-                    .padding(.top)
+        NavigationView {
+            VStack(spacing: 30) {
+                Text("NegotiateX")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
 
-                // Persona Picker
-                Picker("Persona", selection: $selectedPersona) {
-                    Text("The Diplomat").tag("The Diplomat")
-                    Text("The Strategist").tag("The Strategist")
-                    Text("The Dealmaker").tag("The Dealmaker")
+                Text("Choose your negotiation persona")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+
+                VStack(spacing: 20) {
+                    ForEach(personas, id: \.0) { persona, name, description in
+                        PersonaCard(
+                            persona: persona,
+                            name: name,
+                            description: description,
+                            isSelected: selectedPersona == persona,
+                            action: { selectedPersona = persona }
+                        )
+                    }
                 }
-                .pickerStyle(SegmentedPickerStyle())  // Use segmented picker for a better UI
-                .padding()
 
-                // NavigationLink to SimulationView
                 NavigationLink(destination: SimulationView(persona: selectedPersona)) {
                     Text("Start Simulation")
-                        .font(.title2)
-                        .padding()
-                        .background(Color.green)
+                        .font(.headline)
                         .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.accentColor)
                         .cornerRadius(10)
                 }
                 .padding(.top)
-
-                Spacer()
             }
-            .navigationTitle("Home")
+            .padding()
+            .background(colorScheme == .dark ? Color.black : Color.white)
+            .navigationBarHidden(true)
         }
     }
 }
 
-#Preview {
-    HomeView()
+struct PersonaCard: View {
+    let persona: String
+    let name: String
+    let description: String
+    let isSelected: Bool
+    let action: () -> Void
+    @Environment(\.colorScheme) var colorScheme
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Image(persona) // Make sure to add these images to your asset catalog
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60, height: 60)
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading) {
+                    Text(name)
+                        .font(.headline)
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.1))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
+        HomeView().preferredColorScheme(.dark)
+    }
 }

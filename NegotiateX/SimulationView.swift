@@ -24,6 +24,8 @@ struct SimulationView: View {
     ]
     @State var persona: String
 
+    @Environment(\.colorScheme) var colorScheme
+
     public init(persona: String) {
         _persona = State(initialValue: persona)
     }
@@ -80,10 +82,11 @@ struct SimulationView: View {
                 .fill(isUsingInternet ? Color.green : Color.blue)
                 .frame(width: 10, height: 10)
             Text(isUsingInternet ? "Using Internet" : "Not Using Internet")
-                .font(.subheadline.weight(.medium))
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding(8)
-        .background(Color.gray.opacity(0.1))
+        .background(Color(colorScheme == .dark ? .gray : .white).opacity(0.2))
         .cornerRadius(20)
         .help(
             isUsingInternet
@@ -178,19 +181,37 @@ struct SimulationView: View {
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         if selectedScenario == nil {
             selectedScenario = newMessage
-            let message = ChatMessage(content: newMessage, isUser: true)
-            chatMessages.append(message)
-        } else {
-            let message = ChatMessage(content: newMessage, isUser: true)
-            chatMessages.append(message)
         }
-        newMessage = ""
+        let message = ChatMessage(content: newMessage, isUser: true)
+        chatMessages.append(message)
 
-        // Simulate AI response
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            let aiResponse = ChatMessage(content: "This is a simulated AI response.", isUser: false)
-            chatMessages.append(aiResponse)
+        isUsingInternet = true
+
+        aimlService.generateResponse(
+            prompt: newMessage,
+            scenario: selectedScenario ?? "General negotiation",
+            persona: persona,
+            images: uploadedImages
+        ) { result in
+            DispatchQueue.main.async {
+                self.isUsingInternet = false
+
+                switch result {
+                case .success(let response):
+                    let aiResponse = ChatMessage(content: response, isUser: false)
+                    self.chatMessages.append(aiResponse)
+                case .failure(let error):
+                    print("Error: \(error.localizedDescription)")
+                    let errorMessage =
+                        (error as? AIMLError)?.errorDescription ?? error.localizedDescription
+                    let errorChatMessage = ChatMessage(
+                        content: "Error: \(errorMessage)", isUser: false)
+                    self.chatMessages.append(errorChatMessage)
+                }
+            }
         }
+
+        newMessage = ""
     }
 
     private var scenarioSelectionAndInput: some View {
@@ -209,7 +230,7 @@ struct SimulationView: View {
                         Text(scenario)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue.opacity(0.1))
+                            .background(Color(colorScheme == .dark ? .gray : .white).opacity(0.2))
                             .cornerRadius(10)
                     }
                 }
@@ -234,6 +255,8 @@ struct SimulationView: View {
             Image(systemName: "plus")
         }
     }
+
+    private let aimlService = AIMLService(apiKey: Config.aimlApiKey)
 }
 
 struct ChatMessage: Identifiable {
@@ -244,14 +267,15 @@ struct ChatMessage: Identifiable {
 
 struct ChatBubble: View {
     let message: ChatMessage
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         HStack {
             if message.isUser { Spacer() }
             Text(message.content)
                 .padding()
-                .background(message.isUser ? Color.blue : Color.gray)
-                .foregroundColor(.white)
+                .background(message.isUser ? Color.accentColor : Color.clear)
+                .foregroundColor(message.isUser ? .white : (colorScheme == .dark ? .white : .black))
                 .cornerRadius(10)
             if !message.isUser { Spacer() }
         }
