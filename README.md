@@ -3,6 +3,8 @@
 **NegotiateX** is a smart negotiation assistant that helps you master tough conversations. With **Llama 3.2** under the hood, it gives you AI-driven insights, custom scenarios, and real-time guidance for negotiations—whether you're closing deals or settling disputes.
 
 ---
+![alt text](https://drive.google.com/file/d/1t6wxPRUUM_TJPA8h-8jblEpM8l9R8xh8/view?usp=sharing)
+
 
 ## Features
 
