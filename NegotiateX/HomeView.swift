@@ -14,7 +14,7 @@ struct HomeView: View {
     let personas = [
         ("The Diplomat", "Nelson Mandela", "Bridging divides with empathy"),
         ("The Strategist", "Sun Tzu", "Winning without fighting"),
-        ("The Dealmaker", "Harvey Spectar", "Closing deals with precision and persuasion")
+        ("The Dealmaker", "Harvey Specter", "Closing deals with precision and persuasion")
     ]
 
     var body: some View {
@@ -69,9 +69,9 @@ struct PersonaCard: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(persona) // Make sure to add these images to your asset catalog
+                Image(imageName)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 60, height: 60)
                     .clipShape(Circle())
 
@@ -93,6 +93,19 @@ struct PersonaCard: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    private var imageName: String {
+        switch persona {
+        case "The Diplomat":
+            return "nelson"
+        case "The Strategist":
+            return "sun-tzu"
+        case "The Dealmaker":
+            return "harvey"
+        default:
+            return "placeholder" // Add a placeholder image to your asset catalog for this case
+        }
     }
 }
 

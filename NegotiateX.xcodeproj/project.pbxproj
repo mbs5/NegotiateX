@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		64C58C552CC617E300E44607 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 64C58C532CC617DA00E44607 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		6462A8932CC4D7B700A22A2B /* NegotiateX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NegotiateX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64C58C532CC617DA00E44607 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -34,6 +39,7 @@
 			children = (
 				6462A8952CC4D7B700A22A2B /* NegotiateX */,
 				6462A8942CC4D7B700A22A2B /* Products */,
+				64C58C532CC617DA00E44607 /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64C58C552CC617E300E44607 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

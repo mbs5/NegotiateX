@@ -1,3 +1,3 @@
 struct Config {
-    static let aimlApiKey = "2ff2831dc34c4b83a892c9287ad3d9d2"
+    static let aimlApiKey = "9f81ef892dbb42fab5d606ece9f9f59c"
 }
