@@ -7,7 +7,7 @@
 
 ## Features
 
-- **AI-Powered Assistance**: Llama 3.2 helps you simulate real-world negotiations.
+- **AI-Powered Assistance**: Llama 3.2 1Bn(Offline) + Llama 3.2 90Bn(Online) Vision helps you simulate real-world negotiations.
 - **Personalized Personas**: Choose from The Diplomat, The Strategist, or The Dealmaker for tailored advice.
 - **Real-Time Feedback**: Immediate insights based on your inputs and scenarios.
 - **Local + Cloud Models**: Optimized for both local and online performance.
