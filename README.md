@@ -23,13 +23,19 @@
 2. Run the app:
    ```bash
    xcodebuild -workspace NegotiateX.xcworkspace
+   
+---
 
 # Demo
 Watch the demo on Loom
 https://t.ly/HtK6h
 
+---
+
 # Why It Works
 Negotiations are hard. NegotiateX makes them easier. Llama 3.2 gives you an AI that learns from your style. You don’t just get feedback; you get smarter with every round.
+
+---
 
 # Contributing
 Have ideas? Pull requests are welcome!
